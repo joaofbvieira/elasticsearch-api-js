@@ -1,0 +1,47 @@
+version: "3"
+
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
+    container_name: ElasticSearchTraining
+    environment:
+      - node.name=es01
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - discovery.type=single-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./docker_volumes:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.10.1
+    container_name: KibanaTraining
+    ports:
+      - "5601:5601"
+    restart: always
+    depends_on:
+      - elasticsearch
+  #filebeat:
+  #  image: docker.elastic.co/beats/filebeat:7.10.1
+  #  volumes:
+  #    - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+  #    - /var/lib/docker/containers:/var/lib/docker/containers:ro
+  #    - /var/run/docker.sock:/var/ru/docker.sock:ro
+  #  user: root
+  #  restart: on-failure
+  #logstash:
+  #  image: docker.elastic.co/logstash/logstash:7.10.1
+  #  command: logstash -f /etc/logstash/conf.d/logstash.conf
+  #  container_name: Logstash
+  #  volumes:
+  #    - ./logstash:/etc/logstash/conf.d
+  #    - ./logstash/patterns:/opt/logstash/patterns
+  #  ports:
+  #    - "5044:5044"
+  #    - "4560:4560"
+  #  depends_on:
+  #    - elasticsearch
