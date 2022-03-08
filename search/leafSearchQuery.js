@@ -4,19 +4,14 @@ const httpClient = require('../http/elasticsearch.http');
 const questions = [
     {
         type: 'input',
-        name: 'indexName',
-        message: 'What is the index name?'
-    },
-    {
-        type: 'input',
-        name: 'query',
-        message: 'Type the search term:'
+        name: 'author',
+        message: 'What is the author name?'
     }
 ];
 
 inquirer.prompt(questions)
 .then((answers) => {
-    httpClient.get(`${answers.indexName}/_search?q=${answers.query}`)
+    httpClient.get(`books/_search?q=author:${answers.author}`)
     .then((result) => {
         console.table(result.data.hits.hits.map((record) => {
             return {
